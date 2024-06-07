@@ -61,6 +61,7 @@ class TodoViewSet(viewsets.ModelViewSet):
         history = get_object_or_404(History, pk=pk)
         if history.action == 'add':
             Todo.objects.get(id=history.todo_id).delete()
+            History.objects.filter(todo_id=todo.id, action__in=['add', 'edit','complete']).delete()
         elif history.action == 'delete':
             if Todo.objects.filter(id=history.todo_id).exists():
                 return Response({'error': 'ID conflict'}, status=409) 
