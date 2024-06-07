@@ -19,5 +19,6 @@ class History(models.Model):
     ]
     action = models.CharField(max_length=10, choices=ACTION_CHOICES)
     todo_id = models.UUIDField(null=True, blank=True)
+    todo_title = models.CharField(max_length=200)
     data = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)

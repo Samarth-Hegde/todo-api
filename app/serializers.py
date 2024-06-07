@@ -9,4 +9,4 @@ class TodoSerializer(serializers.ModelSerializer):
 class HistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = History
-        fields = ['id', 'action', 'todo_id', 'created_at']
+        fields = ['id', 'action', 'todo_id','todo_title', 'created_at']

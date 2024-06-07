@@ -17,7 +17,7 @@ class TodoViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
         todo = Todo.objects.get(id=response.data['id'])
-        History.objects.create(action='add', todo_id=todo.id, data={'title': todo.title, 'description': todo.description, 'completed': todo.completed})
+        History.objects.create(action='add', todo_title = todo.title, todo_id=todo.id, data={'title': todo.title, 'description': todo.description, 'completed': todo.completed})
         return response
 
     def update(self, request, *args, **kwargs):
@@ -25,7 +25,7 @@ class TodoViewSet(viewsets.ModelViewSet):
         old_data = {'title': todo.title, 'description': todo.description, 'completed': todo.completed}
         response = super().update(request, *args, **kwargs)
         new_data = {'title': request.data.get('title', todo.title), 'description': request.data.get('description', todo.description), 'completed': request.data.get('completed', todo.completed)}
-        History.objects.create(action='edit', todo_id=todo.id, data={'old': old_data, 'new': new_data})
+        History.objects.create(action='edit',todo_title = todo.title, todo_id=todo.id, data={'old': old_data, 'new': new_data})
         return response
 
     def partial_update(self, request, *args, **kwargs):
@@ -33,12 +33,12 @@ class TodoViewSet(viewsets.ModelViewSet):
         old_data = {'title': todo.title, 'description': todo.description, 'completed': todo.completed}
         response = super().partial_update(request, *args, **kwargs)
         new_data = {'title': request.data.get('title', todo.title), 'description': request.data.get('description', todo.description), 'completed': request.data.get('completed', todo.completed)}
-        History.objects.create(action='edit', todo_id=todo.id, data={'old': old_data, 'new': new_data})
+        History.objects.create(action='edit',todo_title = todo.title, todo_id=todo.id, data={'old': old_data, 'new': new_data})
         return response
 
     def destroy(self, request, *args, **kwargs):
         todo = self.get_object()
-        History.objects.create(action='delete', todo_id=todo.id, data={'title': todo.title, 'description': todo.description, 'completed': todo.completed})
+        History.objects.create(action='delete',todo_title = todo.title, todo_id=todo.id, data={'title': todo.title, 'description': todo.description, 'completed': todo.completed})
         return super().destroy(request, *args, **kwargs)
 
     @action(detail=True, methods=['post'])
@@ -46,13 +46,13 @@ class TodoViewSet(viewsets.ModelViewSet):
         todo = self.get_object()
         todo.completed = True
         todo.save()
-        History.objects.create(action='complete', todo_id=todo.id, data={'title': todo.title, 'description': todo.description, 'completed': todo.completed})
+        History.objects.create(action='complete',todo_title = todo.title, todo_id=todo.id, data={'title': todo.title, 'description': todo.description, 'completed': todo.completed})
         serializer = TodoSerializer(todo)
         return Response(serializer.data)
 
     @action(detail=False, methods=['get'])
-    def history(self, request):
-        last_ten = History.objects.all()[:10]
+    def history(self, request): 
+        last_ten = History.objects.order_by('-created_at')[:10]
         serializer = HistorySerializer(last_ten, many=True)
         return Response(serializer.data)
 
