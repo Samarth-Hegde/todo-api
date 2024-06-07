@@ -39,6 +39,7 @@ class TodoViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         todo = self.get_object()
         History.objects.create(action='delete',todo_title = todo.title, todo_id=todo.id, data={'title': todo.title, 'description': todo.description, 'completed': todo.completed})
+        History.objects.filter(todo_id=todo.id, action__in=['add', 'edit','complete']).delete()
         return super().destroy(request, *args, **kwargs)
 
     @action(detail=True, methods=['post'])
