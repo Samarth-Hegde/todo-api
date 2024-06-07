@@ -80,4 +80,5 @@ class TodoViewSet(viewsets.ModelViewSet):
             todo.save()
         else:
             Response({'status':'failed'})
+        history.delete()
         return Response({'status': 'success'})  
